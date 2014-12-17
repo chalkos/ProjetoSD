@@ -93,6 +93,18 @@ public class Warehouse {
         return result;
     }
 
+    public List<String> getTaskTypes() {
+        TreeSet<String> tTypes = new TreeSet<String>;
+        tasksLock.lock();
+
+        for(Task t : tasks.values())
+            result.add(t.getName());
+
+        tasksLock.unlock();
+        ArrayList<String> result = new ArrayList<String>(tTypes);
+        return result;
+    }
+
     // TODO: remove should check if the value is bigger than the quantity and throw a new exception
     // TODO: Guiao 5, ex 2: nao esperar nos locks. eu tenho isto feito, e so juntar. Mendes
     private void requestMaterial(Map<String, Integer> material) throws InexistentItemException {
