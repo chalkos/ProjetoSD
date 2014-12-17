@@ -10,31 +10,30 @@ public class Item {
     String name;
     int quantity;
     ReentrantLock lock;
-    Condition notEmpty; //wake up when not empty
+    Condition available;
 
     public Item(String name) {
         this.name = name;
         this.quantity = 0;
         this.lock = new ReentrantLock();
+        this.available = this.lock.newCondition();
     }
 
-    public Item(String name, int quantity) throws InvalidItemQuantityException {
-        if (quantity <= 0)
-            throw new InvalidItemQuantityException("Quantity received: " + quantity + ". Must be > 0.");
-
+    public Item(String name, int quantity) {
         this.name = name;
         this.quantity = quantity;
         this.lock = new ReentrantLock();
+        this.available = lock.newCondition();
     }
 
     // wakes up all threads waiting for this item
     public void signalAll(){
-        this.notEmpty.signalAll();
+        this.available.signalAll();
     }
 
     // go to sleep until we have this item
     public void await() throws InterruptedException {
-        this.notEmpty.await();
+        this.available.await();
     }
 
     public void lock() {
@@ -52,10 +51,11 @@ public class Item {
         this.signalAll();
     }
 
-    public void remove(int quantity) {
-        this.lock();
+    public void remove(int quantity) throws InterruptedException {
+        while(quantity > this.quantity)
+            this.await();
+
         this.quantity -= quantity;
-        this.unlock();
     }
 
     public int getQuantity() {
