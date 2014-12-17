@@ -7,7 +7,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by joaorodrigues on 14 Dec 14.
  */
 public class TaskType {
-<<<<<<< HEAD
     private static int nextId = 0;
     private static HashMap<Integer, Integer> taskIndex = new HashMap<>();
     private static ReentrantLock indexLock = new ReentrantLock();
@@ -82,35 +81,6 @@ public class TaskType {
             result.append("--- " + t.getId() + ": " +t.getClientId() + '\n');
         }
         return result.toString();
-=======
-    private static int idCount = 0;
-    private int id;
-    private String name;
-    private Set<Integer> running;
-    private Map<String, Integer> needs;
-    private ReentrantLock lock;
-
-    //Constructors
-
-    public TaskType() {
-        id = ++idCount;
-        name = "";
-        running = new HashSet<>();
-        needs = new HashMap<>();
-        lock = new ReentrantLock();
-    }
-
-    public TaskType(String na, Map<String, Integer> ne) {
-        id = ++idCount;
-        name = na;
-        running = new HashSet<Integer>();
-        needs = new HashMap<>(ne);
-        lock = new ReentrantLock();
-    }
-
-    public void addTask(int id){
-        running.add(id);
->>>>>>> Created TaskType and Task, supporting Task instances. Several changes in consequence
     }
 
 
@@ -126,11 +96,10 @@ public class TaskType {
 
 
     public Map<String, Integer> getNeeds() {
-<<<<<<< HEAD
+        needsLock.lock();
         HashMap<String, Integer> result = new HashMap<String, Integer>(needs);
+        needsLock.unlock();
         return result;
-=======
-        return new HashMap<String, Integer>(needs);
     }
 
     public void setId(int id) {
@@ -139,14 +108,12 @@ public class TaskType {
 
     public void setName(String name) {
         this.name = name;
->>>>>>> Created TaskType and Task, supporting Task instances. Several changes in consequence
     }
 
     public void setNeeds(Map<String, Integer> ne) {
         needs = new HashMap<>(ne);
     }
 
-<<<<<<< HEAD
     public Map<Integer, Task> getRunning() {
         return new HashMap<Integer, Task>(running);
     }
@@ -154,14 +121,4 @@ public class TaskType {
     public void setRunning(Map<Integer, Task> running) {
         this.running = new HashMap<Integer, Task>(running);
     }
-
-=======
-    public Set<Integer> getRunning() {
-        return new HashSet<Integer>(running);
-    }
-
-    public void setRunning(Set<Integer> running) {
-        this.running = new HashSet<Integer>(running);
-    }
->>>>>>> Created TaskType and Task, supporting Task instances. Several changes in consequence
 }
