@@ -5,14 +5,18 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Warehouse {
     private Map<String, TaskType> taskTypes;
+    private Map<Integer, Task> tasks;
     private Map<String, Item> stock;
     private ReentrantLock stockLock;
+    private ReentrantLock tasksLock;
     private ReentrantLock taskTypesLock;
 
     public Warehouse() {
         taskTypes = new HashMap<>();
+        tasks = new HashMap<>();
         stock = new HashMap<>();
         stockLock = new ReentrantLock();
+        tasksLock = new ReentrantLock();
         taskTypesLock = new ReentrantLock();
     }
 

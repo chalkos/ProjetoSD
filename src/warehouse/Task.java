@@ -9,15 +9,27 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by joaorodrigues on 17 Dec 14.
  */
 public class Task {
+<<<<<<< HEAD
     private static int nextId = 0;
     private final int id = ++nextId;
     private final int clientId;
     private Set<Integer> subscribers;
     private final String typeName;
+=======
+    private static int idCount = 0;
+    private int id;
+    private int clientId;
+    private Set<Integer> subscribers;
+    private String typeName;
+>>>>>>> Created TaskType and Task, supporting Task instances. Several changes in consequence
     private ReentrantLock lock;
 
 
     public Task(int client, String type){
+<<<<<<< HEAD
+=======
+        id = ++idCount;
+>>>>>>> Created TaskType and Task, supporting Task instances. Several changes in consequence
         clientId = client;
         subscribers = new HashSet<>();
         typeName = type;
@@ -26,10 +38,24 @@ public class Task {
 
 
     public void notifySubscribers(){
+<<<<<<< HEAD
             //TODO : tratar do user e das subs, depois voltar a isto
     }
 
 
+=======
+        lock.lock();
+        for( int sub : subscribers){
+            //TODO : tratar do user e das subs, depois voltar a isto
+        }
+        lock.unlock();
+    }
+
+    public void stop(){
+
+    }
+
+>>>>>>> Created TaskType and Task, supporting Task instances. Several changes in consequence
 
 
 
@@ -59,6 +85,31 @@ public class Task {
         return subscribers;
     }
 
+<<<<<<< HEAD
+=======
+    public static void setIdCount(int idCount) {
+        Task.idCount = idCount;
+    }
+>>>>>>> Created TaskType and Task, supporting Task instances. Several changes in consequence
+
+    public int getId() {
+        return id;
+    }
+
+<<<<<<< HEAD
+    public int getClientId() {
+        return clientId;
+    }
+
+
+=======
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
+
+    public static int getIdCount() {
+        return idCount;
+    }
 
     public int getId() {
         return id;
@@ -69,8 +120,15 @@ public class Task {
     }
 
 
+>>>>>>> Created TaskType and Task, supporting Task instances. Several changes in consequence
     public String getTypeName() {
         return typeName;
     }
 
+<<<<<<< HEAD
+=======
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+>>>>>>> Created TaskType and Task, supporting Task instances. Several changes in consequence
 }
