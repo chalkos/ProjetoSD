@@ -17,7 +17,7 @@ public class Warehouse {
     }
 
     // TODO: can that lock mixup cause a deadlock?
-    public void stockUp(String itemName, int quantity) throws InvalidItemQuantityException {
+    public void stockUp(String itemName, int quantity) {
         stockLock.lock();
         Item i = stock.get(itemName);
         stockLock.unlock();
@@ -55,7 +55,7 @@ public class Warehouse {
         return newTaskId;
     }
 
-    public void startTask(int id) throws InexistentTaskException, InexistentItemException {
+    public void startTask(int id) throws InexistentTaskException, InexistentItemException, InterruptedException {
         tasksLock.lock();
         Task t = tasks.get(id);
         tasksLock.unlock();
@@ -63,11 +63,11 @@ public class Warehouse {
         if(t == null)
             throw new InexistentTaskException("User referenced task with id: " + id + " but was not found");
 
-        requestMaterial(t.getNeeds());
+        requestMaterial( t.getNeeds() );
         t.start();
     }
 
-    public void endTask(int id) throws InexistentTaskException, InexistentItemException {
+    public void endTask(int id) throws InexistentTaskException, InexistentItemException, TaskNotRunningException {
         tasksLock.lock();
         Task t = tasks.get(id);
         tasksLock.unlock();
@@ -95,7 +95,7 @@ public class Warehouse {
 
     // TODO: remove should check if the value is bigger than the quantity and throw a new exception
     // TODO: Guiao 5, ex 2: nao esperar nos locks. eu tenho isto feito, e so juntar. Mendes
-    private void requestMaterial(Map<String, Integer> material) throws InexistentItemException {
+    private void requestMaterial(Map<String, Integer> material) throws InexistentItemException, InterruptedException {
         stockLock.lock();
         for (Map.Entry<String, Integer> pair : material.entrySet()) {
             Item i = stock.get(pair.getKey());
