@@ -37,12 +37,17 @@ public class Client {
     }
 
     public void mainMenu(){
+        int i, cOption;
         String str1 = "nothing yet";
-        int cOption;
 
-        System.out.println("\n1.Login\n2.CreateAccount");
-        str1 = input.nextLine();
-        tryLogin(goodInput(str1));
+        while(notLogged) {
+            System.out.println("\n1.Login\n2.CreateAccount\n3.Exit");
+
+            i = goodInput(input.nextLine());
+            if(i == 3)
+                return;
+            tryLogin(i);
+        }
 
         System.out.println("\nWelcome " + str1);
         System.out.println("\n1.Create a new Task Type\n2.Start a Task\n3.Finish a Task\n4.See available Task Types"
@@ -78,12 +83,14 @@ public class Client {
 
     public int goodInput(String str){
         int res;
+
         try{
             res = Integer.parseInt(str);
         } catch(NumberFormatException e){
             System.out.println("\nBad Input, but please, do try again.");
             return -1;
         }
+
         if(res>0 && res<9)
             return res;
         else return -1;
