@@ -58,21 +58,19 @@ public class Client {
                 switch(cOption){
                     case 1: createTaskType();
                         break;
-                    case 2:
+                    case 2: startTask();
                         break;
-                    case 3:
+                    case 3: finishTask();
                         break;
-                    case 4:
+                    case 4: showTaskTypes();
                         break;
-                    case 5:
+                    case 5: showRunningTasks();
                         break;
-                    case 6:
+                    case 6: subscribeToTaskList();
                         break;
-                    case 7:
+                    case 7: stockUpWarehouse();
                         break;
                     case 8:
-                        break;
-                    case 9:
                         break;
                 }
             }
@@ -122,7 +120,34 @@ public class Client {
         }*/
     }
 
-    public void
+    public void startTask(){
+        System.out.println("\nStart new task of type: ");
+        String str1 = input.nextLine();
 
+        //TODO packet "Created a new " + type + " task with id: " + id;
+    }
+
+    public void finishTask(){
+        System.out.println("\nStart new task of type: ");
+        String str1 = input.nextLine();
+        //manda-se id
+        //TODO packet "Finished " + type + " task with id: " + id;
+    }
+
+    public void showTaskTypes(){
+        //TODO
+    }
+
+    public void showRunningTasks(){
+        //TODO
+    }
+
+    public void subscribeToTaskList(){
+        //TODO
+    }
+
+    public void stockUpWarehouse(){
+        //TODO
+    }
 
 }
