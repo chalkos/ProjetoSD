@@ -23,7 +23,6 @@ public class Client {
         catch (IOException io) {
             System.out.println("Ups, IO problem!");
         }
-
         input = new Scanner(System.in);
         notLogged = true;
     }
@@ -113,10 +112,17 @@ public class Client {
             System.out.println("\nNeeded material quantity: ");
             needs.put(str2,goodInput(str3));
         }
-
-        CreateTaskTypeObject cttobj = new CreateTaskTypeObject(str1,needs);
+       /*
 
         System.out.println("Sending request to server...");
-        outStream.writeObject("test message #"+i);
+        try {
+            outStream.writeObject(cttobj);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
     }
+
+    public void
+
+
 }
