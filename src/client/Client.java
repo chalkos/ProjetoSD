@@ -12,12 +12,13 @@ public class Client {
     private Socket cSocket;
     private boolean notLogged;
     private Scanner input;
-    ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
+    private ObjectOutputStream outStream;
 
 
     public Client(int port) {
         try{
             cSocket = new Socket("localhost", 12345);
+            outStream= new ObjectOutputStream(cSocket.getOutputStream());
         }
         catch (IOException io) {
             System.out.println("Ups, IO problem!");
