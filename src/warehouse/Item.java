@@ -52,10 +52,12 @@ public class Item {
     }
 
     public void remove(int quantity) throws InterruptedException {
+        this.lock();
         while(quantity > this.quantity)
             this.await();
 
         this.quantity -= quantity;
+        this.unlock();
     }
 
     public int getQuantity() {
