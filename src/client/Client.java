@@ -2,6 +2,7 @@
 package client;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -11,6 +12,7 @@ public class Client {
     private Socket cSocket;
     private boolean notLogged;
     private Scanner input;
+    ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
 
 
     public Client(int port) {
@@ -74,7 +76,6 @@ public class Client {
                         break;
                 }
             }
-            else System.out.println("\nBad Input, but please, do try again.");
         }
     }
 
@@ -87,6 +88,7 @@ public class Client {
         try{
             res = Integer.parseInt(str);
         } catch(NumberFormatException e){
+            System.out.println("\nBad Input, but please, do try again.");
             return -1;
         }
         if(res>0 && res<9)
@@ -95,17 +97,25 @@ public class Client {
     }
 
     public void createTaskType(){
-        String str1, str2, str3;
-        HashMap<String,Integer> needs;
+        String str1, str2, str3="";
+        HashMap<String,Integer> needs = new HashMap<>();
+
+
         System.out.println("\nNew TaskType name: ");
         str1 = input.nextLine();
 
-        System.out.println("\nNeeded material name: ");
-        while( !(str2 = input.nextLine()).equals("cancel")){
-            System.out.println("\nNeeded material name: ");
+        System.out.println("\nAdd TaskType need? (y/n)");
 
+        while((str2 = input.nextLine()).equals("y")){
+            System.out.println("\nNeeded material name: ");
+            str2 = input.nextLine();
+            System.out.println("\nNeeded material quantity: ");
+            needs.put(str2,goodInput(str3));
         }
-        System.out.println("\nNeeded material name: ");
-        createTaskTypeObject(str1,needs);
+
+        CreateTaskTypeObject cttobj = new CreateTaskTypeObject(str1,needs);
+
+        System.out.println("Sending request to server...");
+        outStream.writeObject("test message #"+i);
     }
 }
