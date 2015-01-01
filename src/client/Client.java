@@ -110,14 +110,13 @@ public class Client {
             System.out.println("\nNeeded material quantity: ");
             needs.put(str2,goodInput(str3));
         }
-       /*
 
         System.out.println("Sending request to server...");
         try {
-            outStream.writeObject(cttobj);
+            outStream.writeObject();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     public void startTask(){

@@ -58,7 +58,6 @@ public class Warehouse {
     }
 
     public int startTask(String typeName) throws InexistentTaskTypeException, InexistentItemException {
-<<<<<<< HEAD
         TaskType type;
 
         requestMaterial(type.getNeeds());
@@ -69,33 +68,6 @@ public class Warehouse {
 
             if (type == null)
                 throw new InexistentTaskTypeException("User referenced task type with name: " + typeName + " but was not found");
-=======
-
-        Task t = new Task(/* TODO: USER ID */, typeName);
-        int taskId = t.getId();
-        TaskType type;
-
-        taskTypesLock.lock();
-        try {
-            type = taskTypes.get(typeName);
-
-            if (type == null)
-                throw new InexistentTaskTypeException("User referenced task type with name: " + typeName + " but was not found");
-
-            tasksLock.lock();
-
-            tasks.put(taskId, t);
-
-            type.addTask(taskId);
-            taskTypes.put(typeName, type);
-
-            tasksLock.unlock();
-        }
-        finally {
-            taskTypesLock.unlock();
-        }
-
->>>>>>> Handled the locks in multiple methods
 
             type.lock();
             taskId = type.startTask(/*TODO: USER ID*/);
@@ -109,7 +81,6 @@ public class Warehouse {
     }
 
     public void endTask(int id) throws InexistentTaskException, InexistentItemException {
-<<<<<<< HEAD
 
         int typeId = TaskType.getTypeOfTask(id);
 
@@ -120,25 +91,7 @@ public class Warehouse {
         type.endTask(id);
 
         taskTypesLock.unlock();
-=======
-        tasksLock.lock();
-        TaskType type;
-        Task t;
 
-        try {
-            t = tasks.get(id);
-
-            if (t == null)
-                throw new InexistentTaskException("User referenced task with id: " + id + " but was not found");
-
-            taskTypesLock.lock();
-
-            type = taskTypes.get(t.getTypeName());
-        }
-        finally{
-            tasksLock.unlock();
-        }
->>>>>>> Handled the locks in multiple methods
 
         returnMaterial(type.getNeeds());
     }
