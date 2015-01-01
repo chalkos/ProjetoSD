@@ -39,7 +39,6 @@ public class Server {
             socket = s;
             warehouse = w;
 
-<<<<<<< HEAD
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
         }
@@ -47,15 +46,6 @@ public class Server {
         private void send(Object obj) throws IOException {
             out.writeObject(obj);
             out.flush();
-=======
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-        }
-
-        public void write(String msg){
-            out.println(msg);
->>>>>>> Incomplete Client - Pushing so jorod makes ServerListener
         }
 
         private Serializable receive() throws IOException, ClassNotFoundException {

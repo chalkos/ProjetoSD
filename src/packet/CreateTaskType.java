@@ -11,5 +11,5 @@ public class CreateTaskType implements Serializable {
     public Map<String, Integer> q_itens;
 
     //reply
-    public Collection<String> r_errors = new ArrayList<>();
+    public static Collection<String> r_errors = new ArrayList<>();
 }
