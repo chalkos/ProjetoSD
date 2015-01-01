@@ -43,13 +43,11 @@ public class Server {
 
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream())
-            );
+                    new InputStreamReader(socket.getInputStream()));
         }
 
         public void write(String msg){
             out.println(msg);
-            out.flush();
         }
 
         public String read() throws IOException {
