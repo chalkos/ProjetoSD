@@ -88,7 +88,9 @@ public class Warehouse {
 
         taskTypesLock.unlock();
 
-        returnMaterial(type.getNeeds());
+        try {
+            returnMaterial(type.getNeeds());
+        } catch (InvalidItemQuantityException e) {} // Since we are returning a value that is already valid, the exception never occurs
     }
 
     //Get list of tasks currently being done
@@ -122,25 +124,35 @@ public class Warehouse {
         return result;
     }
 
-
-
-    // TODO: remove should check if the value is bigger than the quantity and throw a new exception
-    // TODO: Guiao 5, ex 2: nao esperar nos locks. eu tenho isto feito, e so juntar. Mendes
-    private void requestMaterial(Map<String, Integer> material) throws InexistentItemException {
+    private void requestMaterial(Map<String, Integer> material) throws InexistentItemException, InterruptedException {
         stockLock.lock();
-        for (Map.Entry<String, Integer> pair : material.entrySet()) {
+        Iterator<Map.Entry<String, Integer>> it = material.entrySet().iterator();
+
+        while( it.hasNext() ) {
+            Map.Entry<String, Integer> pair = it.next();
             Item i = stock.get(pair.getKey());
+
             if(i == null)
                 throw new InexistentItemException("User requested " + pair.getKey());
 
-            i.lock();
-            i.remove(pair.getValue());
-            i.unlock();
+            while( !i.isAvailable( pair.getValue() ) ) {
+                stockLock.unlock();
+                i.waitForMore();
+                stockLock.lock();
+                it = material.entrySet().iterator();        // rewinding the iterator
+            }
         }
+
+        for(Map.Entry<String, Integer> pair : material.entrySet()) {
+            try {
+                stock.get(pair.getKey()).remove(pair.getValue());
+            } catch (InvalidItemQuantityException e) {} // never occurs because the task validates its needs upon creation. we always remove valid values
+        }
+
         stockLock.unlock();
     }
 
-    private void returnMaterial(Map<String, Integer> material) throws InexistentItemException {
+    private void returnMaterial(Map<String, Integer> material) throws InexistentItemException, InvalidItemQuantityException {
         stockLock.lock();
 
         try {
