@@ -1,5 +1,6 @@
 package warehouse;
 
+import java.util.PriorityQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -10,7 +11,7 @@ public class Item {
     String name;
     int quantity;
     ReentrantLock lock;
-    Condition available; //wake up when not empty
+    Condition available; // wake up when not empty
 
     public Item(String name) {
         this.name = name;
@@ -62,8 +63,9 @@ public class Item {
 
     }
 
-    public void remove(int quantity) throws InvalidItemQuantityException {
+    public void remove(int quantity) throws InvalidItemQuantityException, InterruptedException {
         this.lock();
+
         try {
             if(this.quantity < quantity)
                 throw new InvalidItemQuantityException("Quantity received: " + quantity + ". Must be > " + this.quantity);

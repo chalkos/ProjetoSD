@@ -1,6 +1,7 @@
 package warehouse;
 
 import java.util.*;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Warehouse {
@@ -8,12 +9,20 @@ public class Warehouse {
     private Map<String, Item> stock;
     private ReentrantLock stockLock;
     private ReentrantLock taskTypesLock;
+    Condition turn;
+    PriorityQueue<Long> removeQueue;
+    long nextTicket;
+
+    private static final int REM_QUEUE_LIMIT = 4;
 
     public Warehouse() {
         taskTypes = new HashMap<>();
         stock = new HashMap<>();
         stockLock = new ReentrantLock();
         taskTypesLock = new ReentrantLock();
+        this.turn = stockLock.newCondition();
+        this.removeQueue = new PriorityQueue<Long>();
+        this.nextTicket = 1;
     }
 
     // TODO: can that lock mixup cause a deadlock?
@@ -140,6 +149,20 @@ public class Warehouse {
                 i.waitForMore();
                 stockLock.lock();
                 it = material.entrySet().iterator();        // rewinding the iterator
+                // continue; -- this would prevent it getting a useless ticket.
+                // however, can lead to redundancy (if it woke up for no reason,
+                // it would wait iterate everything all over again just to wait here)
+                // but it's not very frequent and would help with the turn system
+            }
+
+            long myTurn = nextTicket++;
+            Long next = removeQueue.peek();
+
+            while(next != null && myTurn > next.longValue() + REM_QUEUE_LIMIT) { // peek returns null if the queue is empty
+                removeQueue.add(myTurn);
+                this.turn.await();
+                removeQueue.remove(myTurn);
+                it = material.entrySet().iterator();        // rewinding the iterator
             }
         }
 
@@ -149,6 +172,7 @@ public class Warehouse {
             } catch (InvalidItemQuantityException e) {} // never occurs because the task validates its needs upon creation. we always remove valid values
         }
 
+        this.turn.signalAll();
         stockLock.unlock();
     }
 
