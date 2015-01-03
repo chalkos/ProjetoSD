@@ -135,40 +135,40 @@ public class Warehouse {
 
     private void requestMaterial(Map<String, Integer> material) throws InexistentItemException, InterruptedException {
         stockLock.lock();
+
+        long myTurn = nextTicket++;
         Iterator<Map.Entry<String, Integer>> it = material.entrySet().iterator();
 
         while( it.hasNext() ) {
             Map.Entry<String, Integer> pair = it.next();
             Item i = stock.get(pair.getKey());
-
-            if(i == null)
-                throw new InexistentItemException("User requested " + pair.getKey());
+            boolean waited = false;
 
             while( !i.isAvailable( pair.getValue() ) ) {
                 stockLock.unlock();
                 i.waitForMore();
                 stockLock.lock();
+                waited = true;
                 it = material.entrySet().iterator();        // rewinding the iterator
-                // continue; -- this would prevent it getting a useless ticket.
-                // however, can lead to redundancy (if it woke up for no reason,
-                // it would wait iterate everything all over again just to wait here)
-                // but it's not very frequent and would help with the turn system
             }
 
-            long myTurn = nextTicket++;
+            if(waited)
+                continue;
+
             Long next = removeQueue.peek();
 
             while(next != null && myTurn > next.longValue() + REM_QUEUE_LIMIT) { // peek returns null if the queue is empty
                 removeQueue.add(myTurn);
                 this.turn.await();
                 removeQueue.remove(myTurn);
+                next = removeQueue.peek();
                 it = material.entrySet().iterator();        // rewinding the iterator
             }
         }
 
         for(Map.Entry<String, Integer> pair : material.entrySet()) {
             try {
-                stock.get(pair.getKey()).remove(pair.getValue());
+                stock.get( pair.getKey() ).remove( pair.getValue() );
             } catch (InvalidItemQuantityException e) {} // never occurs because the task validates its needs upon creation. we always remove valid values
         }
 
