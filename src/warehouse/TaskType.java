@@ -54,6 +54,11 @@ public class TaskType {
         }
 
         t.end();
+
+        indexLock.lock();
+        taskIndex.remove(taskId);
+        indexLock.unlock();
+
         running.remove(taskId);
         runningLock.unlock();
     }
