@@ -29,20 +29,20 @@ public class Warehouse {
         stockLock.lock();
         Item i = stock.get(itemName);
 
-
-        if(i == null)
+        if (i == null)
             i = new Item(itemName);
 
-        i.lock();
-
         stockLock.unlock();
-
-        i.add(quantity);
+        i.lock();
+        try {
+            i.add(quantity);
+        } finally {
+            i.unlock();
+        }
 
         stockLock.lock();
         stock.put(itemName, i);
 
-        i.unlock();
         stockLock.unlock();
     }
 
