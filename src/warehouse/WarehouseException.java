@@ -16,6 +16,7 @@ public class WarehouseException extends Exception {
         this.put("AlreadySubscribedException", "That ID is already subscribed to that task");
         this.put("UnknownPacketException", "Received an unexpected packet");
         this.put("UserNotAllowedException", "You are not allowed to do that");
+        this.put("InvalidItemQuantityException", "Quantity must be positive");
     }};
 
     private String className;
