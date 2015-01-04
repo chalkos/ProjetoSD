@@ -13,8 +13,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Server {
     private final Warehouse warehouse = new Warehouse();
     private ServerSocket serverSocket;
-    private static Map<String, User> users;
-    private static ReentrantLock userLock;
+    protected static Map<String, User> users;
+    protected static ReentrantLock userLock;
     private final Pipe pipe;
 
     public Server(int startingPort, Pipe p) throws IOException {
@@ -144,6 +144,11 @@ public class Server {
             send(obj);
         }
 
+        private void setCurrentUser(User u) {
+            currentUser = u;
+            u.login(out);
+        }
+
         protected boolean doLogin(Login obj) throws IOException {
             boolean logged = false;
             String error = null;
@@ -158,9 +163,9 @@ public class Server {
 
                     u = new User(obj.q_username, obj.q_password);
                     Server.users.put(obj.q_username, u);
-                    u.login();
+
                     logged = true;
-                    currentUser = u;
+                    setCurrentUser(u);
                     obj.r_success.add("Logged in!");
                 }
                 else
@@ -177,9 +182,8 @@ public class Server {
                     if (currentUser != null)
                         currentUser.logout();
 
-                    u.login();
+                    setCurrentUser(u);
                     logged = true;
-                    currentUser = u;
                     obj.r_success.add("Logged in!");
                 }
             }
@@ -204,7 +208,7 @@ public class Server {
 
         protected void doSubscribe(Subscribe obj) {
             (new Thread(
-                    new SubscriptionHandler(sender, obj, warehouse) )
+                    new SubscriptionHandler(sender, obj, warehouse, currentUser.getUsername()) )
             ).start();
         }
 

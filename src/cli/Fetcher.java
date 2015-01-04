@@ -73,7 +73,16 @@ public abstract class Fetcher implements Runnable{
                     } else if(obj instanceof Subscribe){
                         Subscribe o = (Subscribe) obj;
                         receiversLock.lock();
-                        receivers.get(o.id).set(o);
+                        Receiver r = receivers.get(o.id);
+                        // if we don't have a receiver
+                        // it was an lost async packet
+                        if (r == null) {
+                            Subscriber.printPacket(o);
+                        } else {
+                            // else it was an expected packet, we must carry on
+                            r.set(o);
+                            receivers.remove(o.id);
+                        }
                         receiversLock.unlock();
                     } else if (obj instanceof Packet) {
                         Packet o = (Packet) obj;

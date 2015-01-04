@@ -1,6 +1,7 @@
 package server;
 
 import packet.Packet;
+import packet.Subscribe;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -15,6 +16,8 @@ public class Sender implements Runnable{
     private Condition hasObjects;
     private ObjectOutputStream out;
 
+    private String user;
+
     private IOException exception;
     private ReentrantLock exceptionLock;
 
@@ -27,6 +30,18 @@ public class Sender implements Runnable{
 
         exception = null;
         exceptionLock = new ReentrantLock();
+    }
+
+    public void setUser(String s) {
+        this.user = s;
+    }
+
+    private ObjectOutputStream getUserOutputStream() {
+        Server.userLock.lock();
+        User u = Server.users.get(this.user);
+        ObjectOutputStream o = u.getOutputStream();
+        Server.userLock.unlock();
+        return o;
     }
 
     public void send(Packet p) throws IOException{
@@ -59,8 +74,15 @@ public class Sender implements Runnable{
                 Packet obj = objects.remove();
                 objectsLock.unlock();
 
-                out.writeObject(obj);
-                out.flush();
+                if (obj instanceof Subscribe) {
+                    ObjectOutputStream userOut = getUserOutputStream();
+                    userOut.writeObject(obj);
+                    userOut.flush();
+                } else {
+                    out.writeObject(obj);
+                    out.flush();
+                }
+
             } catch (IOException e) {
                 streamOK = false;
                 exceptionLock.lock();

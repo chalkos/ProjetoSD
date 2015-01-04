@@ -18,13 +18,15 @@ public class SubscriptionHandler implements Runnable{
     private Subscribe obj;
     private Warehouse warehouse;
     private Collection<Integer> ids;
+    private String username;
 
 
-    public SubscriptionHandler(Sender s, Subscribe o, Warehouse w){
+    public SubscriptionHandler(Sender s, Subscribe o, Warehouse w, String username){
         sender = s;
         obj = o;
         warehouse = w;
         ids = o.q_ids;
+        this.username = username;
     }
 
     @Override
@@ -40,6 +42,7 @@ public class SubscriptionHandler implements Runnable{
         }
 
         try{
+            sender.setUser(username);
             sender.send(obj);
         } catch (IOException e) {
             e.printStackTrace();

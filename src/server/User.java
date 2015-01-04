@@ -1,5 +1,7 @@
 package server;
 
+import java.io.ObjectOutputStream;
+
 /**
  * Created by mendes on 01/01/15.
  */
@@ -10,6 +12,7 @@ public class User {
     private int id;
     private boolean logged;
     private static int idCount = 1;
+    private ObjectOutputStream out;
 
     /**
      * Constructor
@@ -40,8 +43,17 @@ public class User {
     /**
      * Set user as logged in
      */
-    public void login() {
+    public void login(ObjectOutputStream o) {
         this.logged = true;
+        this.out = o;
+    }
+
+    /**
+     * Returns the user output chanel
+     * @return
+     */
+    public ObjectOutputStream getOutputStream() {
+        return this.out;
     }
 
     /**

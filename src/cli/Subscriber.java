@@ -10,11 +10,7 @@ public class Subscriber implements Runnable {
         this.receiver = receiver;
     }
 
-    @Override
-    public void run() {
-        Subscribe s = receiver.get();
-        // got a Subscribe packet
-
+    public static void printPacket(Subscribe s) {
         StringBuilder sb = new StringBuilder();
 
         //check for errors
@@ -38,5 +34,12 @@ public class Subscriber implements Runnable {
         sb.append(") are finished.\n");
 
         System.out.print(sb.toString());
+    }
+    @Override
+    public void run() {
+        Subscribe s = receiver.get();
+        // got a Subscribe packet
+
+        printPacket(s);
     }
 }
